@@ -60,24 +60,16 @@ const App = () => {
   };
 
   /**
-   * Function called when 'Cancel' button is clicked
+   * Function called when 'Apply' or 'Cancel' button is clicked
    */
-  const cancelSettings = () => {
-    setSettings(lastAppliedSetting);
-    setAlertMessage("Settings Canceled");
-    console.log("Settings canceled", JSON.stringify(lastAppliedSetting));
-    setTimeout(() => {
-      setAlertMessage("");
-    }, 3000);
-  };
-
-  /**
-   * Function called when 'Apply' button is clicked
-   */
-  const applySettings = () => {
-    setLastAppliedSetting(settings);
-    setAlertMessage("Settings Applied");
-    console.log("Settings applied", JSON.stringify(settings));
+  const buttonClickHandler = (isApply?: boolean) => {
+    isApply ? setLastAppliedSetting(settings) : setSettings(lastAppliedSetting);
+    setAlertMessage(`Settings ${isApply ? "Applied" : "Canceled"}`);
+    console.log(
+      `${
+        isApply ? JSON.stringify(settings) : JSON.stringify(lastAppliedSetting)
+      }`
+    );
     setTimeout(() => {
       setAlertMessage("");
     }, 3000);
@@ -105,10 +97,17 @@ const App = () => {
         handleChange={(value: number) => handleChange(value, "minimum")}
       ></Setting>
       <div className="buttons-container">
-        <AppButton disabled={!buttonsActive} onClick={cancelSettings}>
+        <AppButton
+          disabled={!buttonsActive}
+          onClick={() => buttonClickHandler()}
+        >
           Cancel
         </AppButton>
-        <AppButton disabled={!buttonsActive} primary onClick={applySettings}>
+        <AppButton
+          disabled={!buttonsActive}
+          primary
+          onClick={() => buttonClickHandler(true)}
+        >
           Apply
         </AppButton>
       </div>
