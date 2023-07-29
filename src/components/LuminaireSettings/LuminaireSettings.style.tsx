@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const AppContainer = styled.div`
+export const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: fit-content;
@@ -22,7 +22,7 @@ export const AppContainer = styled.div`
   }
 `;
 
-export const AppButton = styled.button<{ primary?: boolean }>`
+export const Button = styled.button<{ primary?: boolean }>`
   background: ${(props) => (props.primary ? "#e73c3c" : "#eaeaea")};
   color: ${(props) => (props.primary ? "white" : "black")};
   padding: 0.75rem 1rem;

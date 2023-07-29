@@ -1,12 +1,20 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
-import App from "./App";
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  cleanup,
+} from "@testing-library/react";
+import LuminaireSettings from "../LuminaireSettings/LuminaireSettings";
+
+const mockSettingsEmitter = jest.fn();
 
 beforeEach(() => {
-  render(<App />);
   jest.useFakeTimers();
+  render(<LuminaireSettings settingsEmitter={mockSettingsEmitter} />);
 });
 
-describe("application", () => {
+describe("luminaire settings", () => {
   test("renders app heading", () => {
     const heading = screen.getByText("Set Levels");
     expect(heading).toBeInTheDocument();
@@ -67,7 +75,7 @@ describe("application", () => {
     await act(() => jest.advanceTimersByTime(3000));
     expect(screen.queryByText("Settings Applied")).not.toBeInTheDocument();
   });
-  test("reverts values when 'Cancel' clicked", () => {
+  test("reverts values when 'Cancel' is clicked", () => {
     const slider = screen.getByTestId("minimum-slider");
     fireEvent.change(slider, { target: { value: 20 } });
     const minimumValueEl = screen.getByTestId("minimum-value");
@@ -75,15 +83,17 @@ describe("application", () => {
     const cancelButton = screen.getByText("Cancel");
     fireEvent.click(cancelButton);
     expect(minimumValueEl.innerHTML).toBe("0%");
+    expect(mockSettingsEmitter).toBeCalled();
   });
-  test("applies values when 'Apply' clicked", () => {
+  test("applies values when 'Apply' is clicked", () => {
     const slider = screen.getByTestId("minimum-slider");
     fireEvent.change(slider, { target: { value: 20 } });
     const minimumValueEl = screen.getByTestId("minimum-value");
     expect(minimumValueEl.innerHTML).toBe("20%");
-    const cancelButton = screen.getByText("Apply");
-    fireEvent.click(cancelButton);
+    const applyButton = screen.getByText("Apply");
+    fireEvent.click(applyButton);
     expect(minimumValueEl.innerHTML).toBe("20%");
+    expect(mockSettingsEmitter).toBeCalled();
   });
   test("'Minimum' level must always be equal or lesser than 'Power Save' level", () => {
     const minimumSlider = screen.getByTestId("minimum-slider");
@@ -139,6 +149,7 @@ describe("application", () => {
   });
 });
 
-afterAll(() => {
+afterEach(() => {
   jest.clearAllTimers();
+  cleanup();
 });
